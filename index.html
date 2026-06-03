@@ -134,6 +134,24 @@ body.en [data-ne]{display:none;}
 .fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
 .fade-in.visible{opacity:1;transform:translateY(0);}
 
+/* ── ACTION POPUP ── */
+.action-popup-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);padding:0;}
+.action-popup-bg.open{display:flex;}
+.action-popup{background:var(--panel);border:1px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:28px 20px 36px;animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.popup-handle{width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 20px;}
+.popup-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.2rem;margin-bottom:6px;text-align:center;}
+.popup-sub{color:var(--muted);font-size:13px;text-align:center;margin-bottom:20px;}
+.popup-options{display:flex;flex-direction:column;gap:10px;}
+.popup-opt{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .2s;text-decoration:none;}
+.popup-opt:hover{border-color:var(--gold);background:rgba(201,168,76,.08);transform:translateX(4px);}
+.popup-opt .opt-icon{font-size:26px;flex-shrink:0;width:44px;height:44px;background:rgba(201,168,76,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.popup-opt .opt-text h4{color:#f0e8d8;font-size:15px;font-weight:700;margin-bottom:2px;}
+.popup-opt .opt-text p{color:var(--muted);font-size:12px;}
+.popup-opt .opt-arrow{margin-left:auto;color:var(--gold);font-size:18px;flex-shrink:0;}
+.popup-cancel{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--muted);border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:12px;transition:all .2s;}
+.popup-cancel:hover{color:white;border-color:rgba(255,255,255,.3);}
+
 /* ══════════════════════════════
    ADMIN PANEL (embedded)
 ══════════════════════════════ */
@@ -255,8 +273,8 @@ body.en [data-ne]{display:none;}
     <div class="badge"><span data-en>📍 2 min from Bus Park</span><span data-ne class="ne-text">📍 बस पार्कबाट २ मिनेट</span></div>
   </div>
   <div class="cta-row">
-    <a href="https://wa.me/9779857620220" class="btn-gold">💬 <span data-en>WhatsApp Book</span><span data-ne class="ne-text">व्हाट्सएप बुक</span></a>
-    <a href="tel:+9779857620220" class="btn-outline">📞 <span data-en>Call Now</span><span data-ne class="ne-text">फोन गर्नुस्</span></a>
+    <button class="btn-gold" onclick="openWAPopup()">💬 <span data-en>WhatsApp Book</span><span data-ne class="ne-text">व्हाट्सएप बुक</span></button>
+    <button class="btn-outline" onclick="openCallPopup()">📞 <span data-en>Call Now</span><span data-ne class="ne-text">फोन गर्नुस्</span></button>
   </div>
 </div>
 
@@ -375,6 +393,97 @@ body.en [data-ne]{display:none;}
   <em>अतिथी देवो भव 🙏</em>
   <div class="powered">Powered by BeniDash Technology · <a href="https://benidash.com" target="_blank">benidash.com</a></div>
 </footer>
+
+<!-- ════════ WHATSAPP POPUP ════════ -->
+<div class="action-popup-bg" id="waPopup" onclick="if(event.target===this)closeWAPopup()">
+  <div class="action-popup">
+    <div class="popup-handle"></div>
+    <div class="popup-title">💬 <span data-en>WhatsApp Us</span><span data-ne class="ne-text">व्हाट्सएपमा सम्पर्क</span></div>
+    <div class="popup-sub" data-en>What can we help you with?</div>
+    <div class="popup-sub" data-ne class="ne-text">हामी कसरी मद्दत गर्न सक्छौं?</div>
+    <div class="popup-options">
+
+      <div class="popup-opt" onclick="waMsg('booking')">
+        <div class="opt-icon">📅</div>
+        <div class="opt-text">
+          <h4 data-en>Book a Room</h4><h4 data-ne class="ne-text">कोठा बुक गर्नुस्</h4>
+          <p data-en>Reserve single, double or family room</p><p data-ne class="ne-text">एकल, दोहोरो वा पारिवारिक कोठा</p>
+        </div>
+        <div class="opt-arrow">→</div>
+      </div>
+
+      <div class="popup-opt" onclick="waMsg('food')">
+        <div class="opt-icon">🍛</div>
+        <div class="opt-text">
+          <h4 data-en>Order Food</h4><h4 data-ne class="ne-text">खाना अर्डर गर्नुस्</h4>
+          <p data-en>Dal bhat, momo, snacks & drinks</p><p data-ne class="ne-text">दाल भात, मम, नास्ता र पेय</p>
+        </div>
+        <div class="opt-arrow">→</div>
+      </div>
+
+      <div class="popup-opt" onclick="waMsg('pickup')">
+        <div class="opt-icon">🚗</div>
+        <div class="opt-text">
+          <h4 data-en>Request Free Pickup</h4><h4 data-ne class="ne-text">निःशुल्क पिकअप माग्नुस्</h4>
+          <p data-en>We'll pick you up from bus park or airport</p><p data-ne class="ne-text">बस पार्क वा एयरपोर्टबाट लिन आउँछौं</p>
+        </div>
+        <div class="opt-arrow">→</div>
+      </div>
+
+      <div class="popup-opt" onclick="waMsg('question')">
+        <div class="opt-icon">❓</div>
+        <div class="opt-text">
+          <h4 data-en>Ask a Question</h4><h4 data-ne class="ne-text">प्रश्न सोध्नुस्</h4>
+          <p data-en>Rates, availability, directions...</p><p data-ne class="ne-text">मूल्य, उपलब्धता, बाटो...</p>
+        </div>
+        <div class="opt-arrow">→</div>
+      </div>
+
+    </div>
+    <button class="popup-cancel" onclick="closeWAPopup()">✕ <span data-en>Cancel</span><span data-ne class="ne-text">रद्द गर्नुस्</span></button>
+  </div>
+</div>
+
+<!-- ════════ CALL POPUP ════════ -->
+<div class="action-popup-bg" id="callPopup" onclick="if(event.target===this)closeCallPopup()">
+  <div class="action-popup">
+    <div class="popup-handle"></div>
+    <div class="popup-title">📞 <span data-en>Call Us</span><span data-ne class="ne-text">फोन गर्नुस्</span></div>
+    <div class="popup-sub" data-en>Choose who to call</div>
+    <div class="popup-sub" data-ne class="ne-text">कसलाई फोन गर्ने?</div>
+    <div class="popup-options">
+
+      <a class="popup-opt" href="tel:+9779857620220" onclick="closeCallPopup()">
+        <div class="opt-icon">👤</div>
+        <div class="opt-text">
+          <h4 data-en>Alok Baniya (Owner)</h4><h4 data-ne class="ne-text">आलोक बनिया (मालिक)</h4>
+          <p>+977 9857620220</p>
+        </div>
+        <div class="opt-arrow">📞</div>
+      </a>
+
+      <a class="popup-opt" href="tel:+977015906491" onclick="closeCallPopup()">
+        <div class="opt-icon">🏨</div>
+        <div class="opt-text">
+          <h4 data-en>Counter / Reception</h4><h4 data-ne class="ne-text">काउन्टर / रिसेप्सन</h4>
+          <p>+977 015906491</p>
+        </div>
+        <div class="opt-arrow">📞</div>
+      </a>
+
+      <a class="popup-opt" href="tel:+9779805154210" onclick="closeCallPopup()">
+        <div class="opt-icon">👔</div>
+        <div class="opt-text">
+          <h4 data-en>Manager</h4><h4 data-ne class="ne-text">म्यानेजर</h4>
+          <p>+977 9805154210</p>
+        </div>
+        <div class="opt-arrow">📞</div>
+      </a>
+
+    </div>
+    <button class="popup-cancel" onclick="closeCallPopup()">✕ <span data-en>Cancel</span><span data-ne class="ne-text">रद्द गर्नुस्</span></button>
+  </div>
+</div>
 
 <!-- ════════════════════════════════
      ADMIN OVERLAY
@@ -557,6 +666,27 @@ function applyBizInfo() {
   if(bizInfo.counterPhone){ const el=document.getElementById('ph-counter'); el.textContent=bizInfo.counterPhone; el.href='tel:'+bizInfo.counterPhone.replace(/\s/g,''); }
   if(bizInfo.managerPhone){ const el=document.getElementById('ph-manager'); el.textContent=bizInfo.managerPhone; el.href='tel:'+bizInfo.managerPhone.replace(/\s/g,''); }
 }
+
+// ══ WHATSAPP POPUP ══
+function openWAPopup(){ document.getElementById('waPopup').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeWAPopup(){ document.getElementById('waPopup').classList.remove('open'); document.body.style.overflow=''; }
+
+const waMsgs = {
+  booking: `🏨 *Myagdi Alok Guest House – Room Booking*\n\nNamaste! I would like to book a room.\n\n📅 Check-in date: \n📅 Check-out date: \n🛏️ Room type: (Single / Double / Family)\n👥 Number of guests: \n\nPlease confirm availability. Thank you! 🙏`,
+  food: `🍛 *Myagdi Alok Guest House – Food Order*\n\nNamaste! I would like to order food.\n\n🍽️ My order:\n1. \n2. \n\n📍 Room number / Location: \n\nThank you! 🙏`,
+  pickup: `🚗 *Myagdi Alok Guest House – Free Pickup Request*\n\nNamaste! I need pickup please.\n\n📍 Pickup from: (Bus Park / Airport / Other)\n🕐 Arrival time: \n👤 My name: \n📞 My number: \n\nThank you! 🙏`,
+  question: `❓ *Myagdi Alok Guest House – Enquiry*\n\nNamaste! I have a question:\n\n`
+};
+
+function waMsg(type) {
+  const msg = waMsgs[type] || waMsgs.question;
+  window.open('https://wa.me/9779857620220?text=' + encodeURIComponent(msg), '_blank');
+  closeWAPopup();
+}
+
+// ══ CALL POPUP ══
+function openCallPopup(){ document.getElementById('callPopup').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeCallPopup(){ document.getElementById('callPopup').classList.remove('open'); document.body.style.overflow=''; }
 
 // ══ LANGUAGE ══
 function setLang(lang) {
