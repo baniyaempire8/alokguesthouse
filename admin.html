@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin – Myagdi Alok Guest House</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C9A84C; --gold-dim:rgba(201,168,76,0.15);
+  --dark:#0f0d09; --panel:#181410; --card:#221e18;
+  --border:rgba(201,168,76,0.2); --text:#f0e8d8;
+  --muted:rgba(240,232,216,0.4); --red:#e05252;
+  --green:#52c97a; --blue:#52a8e0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;}
+
+/* LOGIN */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#2a1f0a 0%,#0f0d09 70%);padding:20px;}
+.login-box{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:48px 40px;width:100%;max-width:380px;box-shadow:0 0 80px rgba(201,168,76,0.08);text-align:center;}
+.login-logo{font-size:52px;margin-bottom:16px;}
+.login-box h1{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);margin-bottom:6px;}
+.login-box p{color:var(--muted);font-size:13px;margin-bottom:32px;}
+.login-box input{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;color:var(--text);font-size:16px;font-family:'DM Mono',monospace;margin-bottom:14px;outline:none;transition:border .2s;letter-spacing:3px;text-align:center;}
+.login-box input:focus{border-color:var(--gold);}
+.btn-login{width:100%;background:var(--gold);color:#1a1208;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-login:hover{background:#e0bc5a;transform:translateY(-2px);}
+.login-err{color:var(--red);font-size:13px;margin-top:12px;display:none;}
+
+/* APP */
+#adminApp{display:none;min-height:100vh;}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-left h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);}
+.topbar-left span{font-size:11px;color:var(--muted);display:block;}
+.status-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.btn-logout{background:rgba(224,82,82,.15);color:var(--red);border:1px solid rgba(224,82,82,.3);padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;}
+
+.main{max-width:900px;margin:0 auto;padding:32px 20px 80px;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin-bottom:32px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.stat-card .num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);}
+.stat-card .label{font-size:12px;color:var(--muted);margin-top:4px;}
+
+/* EXPORT */
+.export-bar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.export-bar p{font-size:13px;color:var(--muted);line-height:1.6;}
+.export-bar p strong{color:var(--gold);}
+.btn-export{background:var(--gold);color:#1a1208;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.btn-export:hover{background:#e0bc5a;}
+
+/* SEC HEAD */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.sec-head h3{font-family:'Playfair Display',serif;font-size:1.3rem;}
+.btn-add{background:var(--gold);color:#1a1208;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;}
+.btn-add:hover{background:#e0bc5a;}
+
+/* TABS */
+.cat-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.cat-tab{background:var(--card);color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.cat-tab.active{background:var(--gold-dim);color:var(--gold);border-color:var(--gold);}
+
+/* LIST */
+.menu-list{display:flex;flex-direction:column;gap:10px;}
+.menu-row{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;transition:border .2s;}
+.menu-row:hover{border-color:var(--gold);}
+.menu-row .emoji-col{font-size:28px;flex-shrink:0;}
+.menu-row .info{flex:1;min-width:0;}
+.menu-row .info h4{font-size:15px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.menu-row .info .sub{font-size:12px;color:var(--muted);}
+.price-col{font-family:'DM Mono',monospace;color:var(--gold);font-size:14px;flex-shrink:0;}
+.cat-badge{background:var(--gold-dim);color:var(--gold);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;text-transform:uppercase;letter-spacing:1px;}
+.row-actions{display:flex;gap:8px;flex-shrink:0;}
+.btn-edit{background:rgba(82,168,224,.15);color:var(--blue);border:1px solid rgba(82,168,224,.3);padding:7px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;}
+.btn-del{background:rgba(224,82,82,.12);color:var(--red);border:1px solid rgba(224,82,82,.25);padding:7px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:14px;}
+.empty .big{font-size:48px;margin-bottom:12px;}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.modal-bg.open{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:24px;color:var(--gold);}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border .2s;}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold);}
+.form-group select option{background:var(--panel);}
+.modal-btns{display:flex;gap:12px;margin-top:20px;}
+.btn-save{flex:1;background:var(--gold);color:#1a1208;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;}
+.btn-cancel{flex:1;background:var(--card);color:var(--muted);border:1px solid var(--border);border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:#0f1a12;padding:12px 28px;border-radius:30px;font-weight:700;font-size:14px;z-index:999;transition:transform .3s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--red);color:white;}
+
+@media(max-width:600px){.menu-row{flex-wrap:wrap;}.cat-badge{display:none;}.modal{padding:24px 18px;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">🏨</div>
+    <h1>Admin Panel</h1>
+    <p>Myagdi Alok Guest House<br>Menu Manager</p>
+    <input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">🔓 Login</button>
+    <div class="login-err" id="loginErr">❌ Wrong password!</div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div style="font-size:24px">🏨</div>
+      <div>
+        <h2>Alok Guest House</h2>
+        <span>Menu Admin Panel</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div class="status-dot"></div>
+      <span style="font-size:12px;color:var(--muted)">Saved Locally</span>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card"><div class="num" id="statTotal">0</div><div class="label">Total Items</div></div>
+      <div class="stat-card"><div class="num" id="statNepali">0</div><div class="label">Nepali</div></div>
+      <div class="stat-card"><div class="num" id="statSnacks">0</div><div class="label">Snacks</div></div>
+      <div class="stat-card"><div class="num" id="statDrinks">0</div><div class="label">Drinks</div></div>
+      <div class="stat-card"><div class="num" id="statBreakfast">0</div><div class="label">Breakfast</div></div>
+    </div>
+
+    <!-- EXPORT INSTRUCTIONS -->
+    <div class="export-bar">
+      <p><strong>📤 How to update the main website:</strong><br>
+      After adding/editing items → click <strong>"Export & Copy"</strong> → paste into the main site file where marked.</p>
+      <button class="btn-export" onclick="exportMenu()">📋 Export & Copy</button>
+    </div>
+
+    <!-- MENU MANAGER -->
+    <div class="sec-head">
+      <h3>📋 Menu Items</h3>
+      <button class="btn-add" onclick="openModal()">+ Add Item</button>
+    </div>
+
+    <div class="cat-tabs">
+      <div class="cat-tab active" onclick="filterCat('all',this)">All</div>
+      <div class="cat-tab" onclick="filterCat('nepali',this)">🍛 Nepali</div>
+      <div class="cat-tab" onclick="filterCat('snacks',this)">🥟 Snacks</div>
+      <div class="cat-tab" onclick="filterCat('drinks',this)">☕ Drinks</div>
+      <div class="cat-tab" onclick="filterCat('breakfast',this)">🍳 Breakfast</div>
+    </div>
+
+    <div class="menu-list" id="menuList"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">➕ Add Item</h3>
+    <input type="hidden" id="editId">
+    <div class="form-group">
+      <label>Emoji</label>
+      <input type="text" id="fEmoji" placeholder="🍛" maxlength="4">
+    </div>
+    <div class="form-group">
+      <label>Name (English)</label>
+      <input type="text" id="fName" placeholder="Dal Bhat Set">
+    </div>
+    <div class="form-group">
+      <label>नाम (नेपाली)</label>
+      <input type="text" id="fNameNe" placeholder="दाल भात सेट">
+    </div>
+    <div class="form-group">
+      <label>Description (English)</label>
+      <input type="text" id="fDesc" placeholder="Rice, dal, sabji, pickle...">
+    </div>
+    <div class="form-group">
+      <label>विवरण (नेपाली)</label>
+      <input type="text" id="fDescNe" placeholder="भात, दाल, सब्जी, अचार...">
+    </div>
+    <div class="form-group">
+      <label>Price (NPR)</label>
+      <input type="text" id="fPrice" placeholder="180–220">
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <select id="fCat">
+        <option value="nepali">🍛 Nepali</option>
+        <option value="snacks">🥟 Snacks</option>
+        <option value="drinks">☕ Drinks</option>
+        <option value="breakfast">🍳 Breakfast</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveItem()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PASS = 'benidash';
+const STORE_KEY = 'alok_menu_items';
+let allItems = [];
+let currentCat = 'all';
+
+// ── AUTH ──
+function doLogin() {
+  if(document.getElementById('pwInput').value === PASS) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    sessionStorage.setItem('alok_auth','1');
+    loadItems();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+  }
+}
+function doLogout() { sessionStorage.removeItem('alok_auth'); location.reload(); }
+if(sessionStorage.getItem('alok_auth')==='1') {
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('adminApp').style.display='block';
+  loadItems();
+}
+
+// ── STORAGE ──
+function loadItems() {
+  const saved = localStorage.getItem(STORE_KEY);
+  allItems = saved ? JSON.parse(saved) : getDefaultMenu();
+  if(!saved) saveItems();
+  renderList(); updateStats();
+}
+function saveItems() {
+  localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
+}
+
+// ── DEFAULT MENU ──
+function getDefaultMenu() {
+  return [
+    {id:uid(),emoji:'🍛',name:'Dal Bhat Set',nameNe:'दाल भात सेट',desc:'Full Nepali thali with rice, dal, sabji, pickle & papad',descNe:'भात, दाल, सब्जी, अचार र पापड सहित',price:'180–220',cat:'nepali'},
+    {id:uid(),emoji:'🍗',name:'Chicken Curry',nameNe:'कुखुराको तरकारी',desc:'Spiced Nepali-style chicken curry with rice',descNe:'नेपाली मसलामा पकाएको कुखुरा र भात',price:'280',cat:'nepali'},
+    {id:uid(),emoji:'🥬',name:'Veg Tarkari',nameNe:'तरकारी',desc:'Seasonal vegetables, home-style cooked',descNe:'मौसमी तरकारी घरकै तरिकामा',price:'150',cat:'nepali'},
+    {id:uid(),emoji:'🐟',name:'Fish Curry',nameNe:'माछाको झोल',desc:'Fresh fish in Nepali masala with rice',descNe:'ताजा माछा नेपाली मसलामा र भात',price:'300',cat:'nepali'},
+    {id:uid(),emoji:'🥟',name:'Steam Momo (8 pcs)',nameNe:'स्टिम मम (८ वटा)',desc:'Juicy steamed dumplings with achar',descNe:'अचारसहित भापमा पकाएको मम',price:'140',cat:'snacks'},
+    {id:uid(),emoji:'🔥',name:'Fried Momo (8 pcs)',nameNe:'फ्राइड मम (८ वटा)',desc:'Crispy fried momo with tomato sauce',descNe:'टमाटर सससहित तलेको मम',price:'160',cat:'snacks'},
+    {id:uid(),emoji:'🍜',name:'Chow Mein',nameNe:'चाउमिन',desc:'Stir-fried noodles with veggies or chicken',descNe:'तरकारी वा कुखुरासहित भुटेको नुडल्स',price:'130–180',cat:'snacks'},
+    {id:uid(),emoji:'☕',name:'Milk Tea',nameNe:'दूध चिया',desc:'Classic Nepali spiced milk tea',descNe:'परम्परागत नेपाली चिया',price:'30',cat:'drinks'},
+    {id:uid(),emoji:'☕',name:'Coffee',nameNe:'कफी',desc:'Instant or filter coffee with milk',descNe:'दूधसहित कफी',price:'60',cat:'drinks'},
+    {id:uid(),emoji:'🧃',name:'Fresh Juice',nameNe:'ताजा जुस',desc:'Mango, orange or lemon juice',descNe:'आँप, सुन्तला, कागती जुस',price:'80',cat:'drinks'},
+    {id:uid(),emoji:'🍳',name:'Egg Fried Rice',nameNe:'अण्डा भुटेको भात',desc:'Rice stir-fried with eggs and vegetables',descNe:'अण्डा र तरकारीसहित भुटेको भात',price:'130',cat:'breakfast'},
+    {id:uid(),emoji:'🥞',name:'Roti & Omelette',nameNe:'रोटी र अमलेट',desc:'Whole wheat roti with spiced egg omelette',descNe:'गहुँको रोटी र मसलेदार अमलेट',price:'100',cat:'breakfast'},
+  ];
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ── STATS ──
+function updateStats() {
+  document.getElementById('statTotal').textContent = allItems.length;
+  document.getElementById('statNepali').textContent = allItems.filter(i=>i.cat==='nepali').length;
+  document.getElementById('statSnacks').textContent = allItems.filter(i=>i.cat==='snacks').length;
+  document.getElementById('statDrinks').textContent = allItems.filter(i=>i.cat==='drinks').length;
+  document.getElementById('statBreakfast').textContent = allItems.filter(i=>i.cat==='breakfast').length;
+}
+
+// ── RENDER ──
+function renderList() {
+  const list = document.getElementById('menuList');
+  const cats = {nepali:'🍛 Nepali',snacks:'🥟 Snacks',drinks:'☕ Drinks',breakfast:'🍳 Breakfast'};
+  const filtered = currentCat==='all' ? allItems : allItems.filter(i=>i.cat===currentCat);
+  if(!filtered.length) {
+    list.innerHTML=`<div class="empty"><div class="big">🍽️</div>No items. Add your first one!</div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(item=>`
+    <div class="menu-row">
+      <div class="emoji-col">${item.emoji||'🍽️'}</div>
+      <div class="info">
+        <h4>${item.name} <span style="color:var(--muted);font-weight:400;font-size:12px">${item.nameNe||''}</span></h4>
+        <div class="sub">${item.desc||''}</div>
+      </div>
+      <div class="price-col">NPR ${item.price}</div>
+      <div class="cat-badge">${cats[item.cat]||item.cat}</div>
+      <div class="row-actions">
+        <button class="btn-edit" onclick="openModal('${item.id}')">✏️ Edit</button>
+        <button class="btn-del" onclick="delItem('${item.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── FILTER ──
+function filterCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+}
+
+// ── MODAL ──
+function openModal(id) {
+  ['editId','fEmoji','fName','fNameNe','fDesc','fDescNe','fPrice'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('fCat').value='nepali';
+  document.getElementById('modalTitle').textContent='➕ Add Item';
+  if(id) {
+    const item = allItems.find(i=>i.id===id);
+    if(item) {
+      document.getElementById('editId').value=id;
+      document.getElementById('fEmoji').value=item.emoji||'';
+      document.getElementById('fName').value=item.name||'';
+      document.getElementById('fNameNe').value=item.nameNe||'';
+      document.getElementById('fDesc').value=item.desc||'';
+      document.getElementById('fDescNe').value=item.descNe||'';
+      document.getElementById('fPrice').value=item.price||'';
+      document.getElementById('fCat').value=item.cat||'nepali';
+      document.getElementById('modalTitle').textContent='✏️ Edit Item';
+    }
+  }
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
+
+// ── SAVE ──
+function saveItem() {
+  const id = document.getElementById('editId').value;
+  const data = {
+    emoji: document.getElementById('fEmoji').value.trim()||'🍽️',
+    name: document.getElementById('fName').value.trim(),
+    nameNe: document.getElementById('fNameNe').value.trim(),
+    desc: document.getElementById('fDesc').value.trim(),
+    descNe: document.getElementById('fDescNe').value.trim(),
+    price: document.getElementById('fPrice').value.trim(),
+    cat: document.getElementById('fCat').value,
+  };
+  if(!data.name||!data.price){showToast('Name and price required!',true);return;}
+  if(id) {
+    const idx = allItems.findIndex(i=>i.id===id);
+    allItems[idx] = {...allItems[idx],...data};
+    showToast('✅ Item updated!');
+  } else {
+    allItems.push({id:uid(),...data});
+    showToast('✅ Item added!');
+  }
+  saveItems(); renderList(); updateStats(); closeModal();
+}
+
+// ── DELETE ──
+function delItem(id) {
+  const item = allItems.find(i=>i.id===id);
+  if(!confirm(`Delete "${item?.name}"?`)) return;
+  allItems = allItems.filter(i=>i.id!==id);
+  saveItems(); renderList(); updateStats();
+  showToast('🗑️ Deleted!');
+}
+
+// ── EXPORT ──
+function exportMenu() {
+  const cats = ['nepali','snacks','drinks','breakfast'];
+  let out = '';
+  cats.forEach(cat => {
+    const items = allItems.filter(i=>i.cat===cat);
+    out += `\n<!-- ===== ${cat.toUpperCase()} ===== -->\n`;
+    items.forEach(item => {
+      out += `<div class="menu-item">
+  <div class="emoji">${item.emoji}</div>
+  <h4 data-en>${item.name}</h4>
+  <h4 data-ne class="ne-text">${item.nameNe||item.name}</h4>
+  <p data-en>${item.desc}</p>
+  <p data-ne class="ne-text">${item.descNe||item.desc}</p>
+  <div class="price">NPR ${item.price}</div>
+</div>\n`;
+    });
+  });
+  navigator.clipboard.writeText(out).then(()=>{
+    showToast('📋 Copied! Paste into main site HTML.');
+  }).catch(()=>{
+    // fallback: show in textarea
+    const ta = document.createElement('textarea');
+    ta.value = out;
+    ta.style.cssText='position:fixed;top:20px;left:20px;right:20px;height:300px;z-index:9999;background:#221e18;color:#f0e8d8;border:2px solid #C9A84C;border-radius:10px;padding:12px;font-size:12px;font-family:monospace;';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    setTimeout(()=>ta.remove(), 5000);
+    showToast('📋 Copied! Close this box.');
+  });
+}
+
+// ── TOAST ──
+function showToast(msg,err=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(err?' err':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
