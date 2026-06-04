@@ -134,6 +134,33 @@ body.en [data-ne]{display:none;}
 .fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
 .fade-in.visible{opacity:1;transform:translateY(0);}
 
+/* ── GALLERY ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.gallery-item{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/3;cursor:pointer;background:var(--card);border:1px solid var(--border);}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.gallery-item:hover img{transform:scale(1.05);}
+.gallery-item .g-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 50%);opacity:0;transition:opacity .3s;display:flex;align-items:flex-end;padding:12px;}
+.gallery-item:hover .g-overlay{opacity:1;}
+.gallery-item .g-caption{color:white;font-size:12px;font-weight:700;line-height:1.3;}
+.gallery-item .g-zoom{position:absolute;top:10px;right:10px;background:rgba(201,168,76,.9);color:#1a1208;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0;transition:opacity .3s;}
+.gallery-item:hover .g-zoom{opacity:1;}
+.gallery-empty{text-align:center;padding:48px 20px;}
+@media(max-width:500px){.gallery-grid{grid-template-columns:repeat(2,1fr);gap:8px;}}
+
+/* ── ADMIN PHOTOS ── */
+.upload-zone{background:var(--card);border:2px dashed var(--gold);border-radius:16px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:16px;}
+.upload-zone:hover{background:rgba(201,168,76,.08);border-color:#e0bc5a;}
+.upload-zone.drag-over{background:rgba(201,168,76,.15);border-color:#e0bc5a;transform:scale(1.01);}
+.uz-icon{font-size:48px;margin-bottom:10px;}
+.uz-title{color:#f0e8d8;font-size:16px;font-weight:700;margin-bottom:6px;}
+.uz-sub{color:var(--muted);font-size:13px;line-height:1.6;}
+.photo-grid-admin{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px;}
+.photo-thumb{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;background:var(--card);border:1px solid var(--border);}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;}
+.photo-thumb .pt-del{position:absolute;top:5px;right:5px;background:rgba(224,82,82,.85);border:none;color:white;width:26px;height:26px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.photo-thumb .pt-cap{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.75);padding:5px 8px;}
+.photo-thumb .pt-cap input{width:100%;background:none;border:none;color:rgba(255,255,255,.8);font-size:10px;outline:none;font-family:'Lato',sans-serif;}
+
 /* ── ACTION POPUP ── */
 .action-popup-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);padding:0;}
 .action-popup-bg.open{display:flex;}
@@ -283,6 +310,7 @@ body.en [data-ne]{display:none;}
   <a href="#about"><span data-en>About</span><span data-ne class="ne-text">बारेमा</span></a>
   <a href="#menu"><span data-en>Menu</span><span data-ne class="ne-text">खाना</span></a>
   <a href="#rooms"><span data-en>Rooms</span><span data-ne class="ne-text">कोठा</span></a>
+  <a href="#gallery"><span data-en>Photos</span><span data-ne class="ne-text">फोटो</span></a>
   <a href="#contact"><span data-en>Contact</span><span data-ne class="ne-text">सम्पर्क</span></a>
   <a href="#book"><span data-en>Book Now</span><span data-ne class="ne-text">बुक गर्नुस्</span></a>
   <a class="admin-tab" onclick="openAdmin()" style="border-left:1px solid rgba(201,168,76,.2);margin-left:4px;">⚙️ Admin</a>
@@ -333,6 +361,31 @@ body.en [data-ne]{display:none;}
     <div class="room-card"><div class="room-img">🏠</div><div class="room-body"><h3 data-en>Family Room</h3><h3 data-ne class="ne-text">पारिवारिक कोठा</h3><p data-en>Perfect for families. Multiple beds, all comforts of home.</p><p data-ne class="ne-text">परिवारका लागि उत्तम। धेरै ओछ्यान।</p><div class="room-price" id="price-family">NPR 1400 / night</div><div class="room-features"><span class="feat-tag">WiFi</span><span class="feat-tag">Attached Bath</span><span class="feat-tag">TV</span><span class="feat-tag">Extra Beds</span></div></div></div>
   </div>
 </section>
+
+<!-- GALLERY -->
+<section id="gallery" style="max-width:100%;padding:60px 20px;background:var(--dark);">
+  <div style="max-width:900px;margin:0 auto;">
+    <div class="section-label" style="color:var(--gold)"><span data-en>Our Space</span><span data-ne class="ne-text">हाम्रो ठाउँ</span></div>
+    <h2 class="section-title" style="color:white"><span data-en>Photo Gallery</span><span data-ne class="ne-text">फोटो ग्यालरी</span></h2>
+    <div class="divider"></div>
+    <div id="galleryGrid" class="gallery-grid"></div>
+    <div id="galleryEmpty" class="gallery-empty" style="display:none;">
+      <div style="font-size:48px;margin-bottom:12px;">📷</div>
+      <p data-en style="color:rgba(255,255,255,.4);font-size:14px;">No photos yet. Admin can add photos from Facebook!</p>
+      <p data-ne class="ne-text" style="color:rgba(255,255,255,.4);font-size:14px;">अहिले फोटो छैन। एडमिनले फेसबुकबाट फोटो थप्न सक्नुहुन्छ!</p>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:900;align-items:center;justify-content:center;flex-direction:column;">
+  <button onclick="closeLightbox()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.1);border:none;color:white;font-size:24px;width:44px;height:44px;border-radius:50%;cursor:pointer;">✕</button>
+  <button onclick="lbPrev()" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:none;color:white;font-size:24px;width:44px;height:44px;border-radius:50%;cursor:pointer;">‹</button>
+  <button onclick="lbNext()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:none;color:white;font-size:24px;width:44px;height:44px;border-radius:50%;cursor:pointer;">›</button>
+  <img id="lbImg" src="" style="max-width:92vw;max-height:82vh;border-radius:12px;object-fit:contain;">
+  <p id="lbCaption" style="color:rgba(255,255,255,.6);font-size:13px;margin-top:12px;text-align:center;padding:0 40px;"></p>
+  <p id="lbCounter" style="color:rgba(255,255,255,.3);font-size:11px;margin-top:4px;"></p>
+</div>
 
 <!-- CONTACT -->
 <section id="contact">
@@ -553,6 +606,37 @@ body.en [data-ne]{display:none;}
       </div>
       <div class="adm-menu-list" id="admMenuList"></div>
 
+      <!-- PHOTOS -->
+      <div class="adm-section-title">📷 Photo Gallery</div>
+
+      <!-- Upload Zone -->
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoFileInput').click()">
+        <div class="uz-icon">📱</div>
+        <div class="uz-title">Tap to Upload Photos</div>
+        <div class="uz-sub">Select from your phone gallery or camera<br>JPG, PNG — multiple photos at once!</div>
+        <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none" onchange="handleFileUpload(this.files)">
+      </div>
+
+      <!-- Caption input for batch -->
+      <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
+        <input type="text" id="batchCaption" placeholder="Caption for next upload (optional)" style="flex:1;min-width:180px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;color:#f0e8d8;font-size:13px;font-family:'Lato',sans-serif;outline:none;">
+      </div>
+
+      <!-- Upload progress -->
+      <div id="uploadProgress" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;text-align:center;">
+        <div style="color:var(--gold);font-weight:700;font-size:14px;margin-bottom:8px;">⏳ Uploading photos...</div>
+        <div style="background:rgba(255,255,255,.1);border-radius:20px;height:6px;overflow:hidden;">
+          <div id="uploadBar" style="background:var(--gold);height:100%;border-radius:20px;width:0%;transition:width .3s;"></div>
+        </div>
+        <div id="uploadStatus" style="color:var(--muted);font-size:12px;margin-top:6px;"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <p style="color:var(--muted);font-size:12px;" id="photoCount">0 photos</p>
+        <button onclick="clearAllPhotos()" style="background:rgba(224,82,82,.12);color:#e05252;border:1px solid rgba(224,82,82,.25);padding:6px 14px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;">🗑️ Clear All</button>
+      </div>
+      <div class="photo-grid-admin" id="adminPhotoGrid"></div>
+
     </div>
   </div>
 </div>
@@ -594,24 +678,24 @@ const INFO_KEY = 'alok_info';
 // ══ DEFAULT DATA ══
 function defaultMenu() {
   return [
-    {id:uid(),emoji:'🍛',name:'Dal Bhat Set',nameNe:'दाल भात सेट',desc:'Full Nepali thali with rice, dal, sabji, pickle & papad',descNe:'भात, दाल, सब्जी, अचार र पापड सहित',price:'180–220',cat:'nepali'},
-    {id:uid(),emoji:'🍗',name:'Chicken Curry',nameNe:'कुखुराको तरकारी',desc:'Spiced Nepali-style chicken curry with rice',descNe:'नेपाली मसलामा पकाएको कुखुरा र भात',price:'280',cat:'nepali'},
-    {id:uid(),emoji:'🥬',name:'Veg Tarkari',nameNe:'तरकारी',desc:'Seasonal vegetables, home-style cooked',descNe:'मौसमी तरकारी घरकै तरिकामा',price:'150',cat:'nepali'},
-    {id:uid(),emoji:'🐟',name:'Fish Curry',nameNe:'माछाको झोल',desc:'Fresh fish in Nepali masala with rice',descNe:'ताजा माछा नेपाली मसलामा',price:'300',cat:'nepali'},
-    {id:uid(),emoji:'🥟',name:'Steam Momo (8 pcs)',nameNe:'स्टिम मम',desc:'Juicy steamed dumplings with achar',descNe:'अचारसहित भापमा पकाएको मम',price:'140',cat:'snacks'},
-    {id:uid(),emoji:'🔥',name:'Fried Momo (8 pcs)',nameNe:'फ्राइड मम',desc:'Crispy fried momo with tomato sauce',descNe:'टमाटर सससहित तलेको मम',price:'160',cat:'snacks'},
-    {id:uid(),emoji:'🍜',name:'Chow Mein',nameNe:'चाउमिन',desc:'Stir-fried noodles with veggies or chicken',descNe:'भुटेको नुडल्स',price:'130–180',cat:'snacks'},
-    {id:uid(),emoji:'☕',name:'Milk Tea',nameNe:'दूध चिया',desc:'Classic Nepali spiced milk tea',descNe:'परम्परागत नेपाली चिया',price:'30',cat:'drinks'},
-    {id:uid(),emoji:'☕',name:'Coffee',nameNe:'कफी',desc:'Instant or filter coffee with milk',descNe:'दूधसहित कफी',price:'60',cat:'drinks'},
-    {id:uid(),emoji:'🧃',name:'Fresh Juice',nameNe:'ताजा जुस',desc:'Mango, orange or lemon juice',descNe:'आँप, सुन्तला, कागती जुस',price:'80',cat:'drinks'},
+    {id:uid(),emoji:'🍛',name:'Veg Khana Set',nameNe:'भेज खाना सेट',desc:'Full veg Nepali thali — rice, dal, sabji, pickle & papad',descNe:'भात, दाल, सब्जी, अचार र पापड सहित',price:'300',cat:'nepali'},
+    {id:uid(),emoji:'🍗',name:'Chicken Set',nameNe:'कुखुरा सेट',desc:'Chicken curry with rice, dal & sabji',descNe:'कुखुरा तरकारी, भात, दाल र सब्जी',price:'400',cat:'nepali'},
+    {id:uid(),emoji:'🐑',name:'Mutton Set',nameNe:'खसीको मासु सेट',desc:'Mutton curry with rice, dal & sabji',descNe:'खसीको मासु, भात, दाल र सब्जी',price:'500',cat:'nepali'},
+    {id:uid(),emoji:'🥟',name:'Steam Momo (8 pcs)',nameNe:'स्टिम मम (८ वटा)',desc:'Juicy steamed dumplings with achar',descNe:'अचारसहित भापमा पकाएको मम',price:'140',cat:'snacks'},
+    {id:uid(),emoji:'🔥',name:'Fried Momo (8 pcs)',nameNe:'फ्राइड मम (८ वटा)',desc:'Crispy fried momo with tomato sauce',descNe:'टमाटर सससहित तलेको मम',price:'160',cat:'snacks'},
+    {id:uid(),emoji:'🍜',name:'Chow Mein',nameNe:'चाउमिन',desc:'Stir-fried noodles with veggies or chicken',descNe:'भुटेको नुडल्स तरकारी वा कुखुरासहित',price:'130–180',cat:'snacks'},
+    {id:uid(),emoji:'☕',name:'Tea (Chiya)',nameNe:'चिया',desc:'Classic Nepali milk tea',descNe:'नेपाली दूध चिया',price:'50',cat:'drinks'},
+    {id:uid(),emoji:'🧑‍✈️',name:'Officer Special',nameNe:'अफिसर स्पेसल',desc:'Special house drink / tea set',descNe:'विशेष घरेलु पेय',price:'100',cat:'drinks'},
+    {id:uid(),emoji:'☕',name:'Coffee',nameNe:'कफी',desc:'Milk coffee',descNe:'दूधसहित कफी',price:'60',cat:'drinks'},
     {id:uid(),emoji:'🍳',name:'Egg Fried Rice',nameNe:'अण्डा भुटेको भात',desc:'Rice stir-fried with eggs and vegetables',descNe:'अण्डा र तरकारीसहित भुटेको भात',price:'130',cat:'breakfast'},
-    {id:uid(),emoji:'🥞',name:'Roti & Omelette',nameNe:'रोटी र अमलेट',desc:'Whole wheat roti with spiced omelette',descNe:'गहुँको रोटी र अमलेट',price:'100',cat:'breakfast'},
+    {id:uid(),emoji:'🥞',name:'Roti & Omelette',nameNe:'रोटी र अमलेट',desc:'Whole wheat roti with spiced egg omelette',descNe:'गहुँको रोटी र अमलेट',price:'100',cat:'breakfast'},
+    {id:uid(),emoji:'🥣',name:'Chiura Set',nameNe:'चिउरा सेट',desc:'Beaten rice with yogurt, pickle & egg',descNe:'दही, अचार र अण्डासहित चिउरा',price:'120',cat:'breakfast'},
   ];
 }
 function defaultInfo() {
   return {
     ownerPhone:'+977 9857620220', counterPhone:'+977 015906491', managerPhone:'+977 9805154210',
-    singlePrice:'NPR 600 / night', doublePrice:'NPR 900 / night', familyPrice:'NPR 1400 / night',
+    singlePrice:'NPR 500 / night', doublePrice:'NPR 1200 / night', familyPrice:'NPR 2500 / night',
     address:'Mitranagar-26, Tripura Sundari Road, New Bus Park, Kathmandu, Nepal'
   };
 }
@@ -631,6 +715,7 @@ function loadAll() {
   const si = localStorage.getItem(INFO_KEY);
   bizInfo = si ? JSON.parse(si) : defaultInfo();
   if(!si) saveInfo_();
+  loadPhotos();
   renderPublicMenu();
   applyBizInfo();
 }
@@ -773,6 +858,8 @@ function showAdmApp() {
   loadInfoFields();
   renderAdmMenu();
   updateStats();
+  renderAdminPhotos();
+  setupDragDrop();
 }
 
 // ══ INFO FIELDS ══
@@ -896,6 +983,171 @@ function showToast(msg,err=false) {
   t.textContent=msg; t.className='toast'+(err?' err':'');
   t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
 }
+
+// ══ PHOTOS ══
+const PHOTO_KEY = 'alok_photos';
+let photos = [];
+
+function loadPhotos() {
+  try {
+    const saved = localStorage.getItem(PHOTO_KEY);
+    photos = saved ? JSON.parse(saved) : [];
+  } catch(e) { photos = []; }
+  renderPublicGallery();
+}
+
+function savePhotos() {
+  try {
+    localStorage.setItem(PHOTO_KEY, JSON.stringify(photos));
+  } catch(e) {
+    showToast('⚠️ Storage full! Delete some photos first.', true);
+  }
+}
+
+// ── FILE UPLOAD ──
+function handleFileUpload(files) {
+  if(!files || !files.length) return;
+  const caption = document.getElementById('batchCaption').value.trim();
+  const total = files.length;
+  let done = 0;
+
+  document.getElementById('uploadProgress').style.display = 'block';
+  document.getElementById('uploadBar').style.width = '0%';
+  document.getElementById('uploadStatus').textContent = `0 / ${total} uploaded`;
+
+  Array.from(files).forEach(file => {
+    if(!file.type.startsWith('image/')) { done++; return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      // Compress image before storing
+      compressImage(e.target.result, 800, 0.75, function(compressed) {
+        photos.push({ id: uid(), url: compressed, caption: caption || file.name.replace(/\.[^/.]+$/,'') });
+        done++;
+        const pct = Math.round((done/total)*100);
+        document.getElementById('uploadBar').style.width = pct + '%';
+        document.getElementById('uploadStatus').textContent = `${done} / ${total} uploaded`;
+        if(done === total) {
+          savePhotos();
+          renderPublicGallery();
+          renderAdminPhotos();
+          document.getElementById('batchCaption').value = '';
+          document.getElementById('photoFileInput').value = '';
+          setTimeout(() => {
+            document.getElementById('uploadProgress').style.display = 'none';
+            document.getElementById('uploadBar').style.width = '0%';
+          }, 1200);
+          showToast(`✅ ${total} photo(s) uploaded!`);
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── COMPRESS IMAGE ──
+function compressImage(dataUrl, maxW, quality, callback) {
+  const img = new Image();
+  img.onload = function() {
+    const canvas = document.createElement('canvas');
+    let w = img.width, h = img.height;
+    if(w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    callback(canvas.toDataURL('image/jpeg', quality));
+  };
+  img.src = dataUrl;
+}
+
+// ── DRAG & DROP ──
+function setupDragDrop() {
+  const zone = document.getElementById('uploadZone');
+  if(!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    handleFileUpload(e.dataTransfer.files);
+  });
+}
+
+function delPhoto(id) {
+  photos = photos.filter(p => p.id !== id);
+  savePhotos(); renderPublicGallery(); renderAdminPhotos();
+  showToast('🗑️ Photo removed!');
+}
+
+function clearAllPhotos() {
+  if(!confirm('Delete ALL photos? This cannot be undone!')) return;
+  photos = [];
+  savePhotos(); renderPublicGallery(); renderAdminPhotos();
+  showToast('🗑️ All photos cleared!');
+}
+
+function updateCaption(id, val) {
+  const p = photos.find(p => p.id === id);
+  if(p){ p.caption = val; savePhotos(); renderPublicGallery(); }
+}
+
+function renderAdminPhotos() {
+  const grid = document.getElementById('adminPhotoGrid');
+  const count = document.getElementById('photoCount');
+  if(!grid) return;
+  count.textContent = photos.length + ' photo(s) in gallery';
+  if(!photos.length){
+    grid.innerHTML='<p style="color:var(--muted);font-size:13px;padding:10px 0;">No photos yet. Tap the upload zone above!</p>';
+    return;
+  }
+  grid.innerHTML = photos.map(p=>`
+    <div class="photo-thumb">
+      <img src="${p.url}" alt="${p.caption||''}">
+      <button class="pt-del" onclick="delPhoto('${p.id}')">✕</button>
+      <div class="pt-cap"><input type="text" value="${p.caption||''}" placeholder="Caption..." onchange="updateCaption('${p.id}',this.value)"></div>
+    </div>`).join('');
+}
+
+// ── PUBLIC GALLERY ──
+let lbIndex = 0;
+
+function renderPublicGallery() {
+  const grid = document.getElementById('galleryGrid');
+  const empty = document.getElementById('galleryEmpty');
+  if(!grid) return;
+  if(!photos.length){ grid.innerHTML=''; if(empty) empty.style.display='block'; return; }
+  if(empty) empty.style.display='none';
+  grid.innerHTML = photos.map((p,i)=>`
+    <div class="gallery-item" onclick="openLightbox(${i})">
+      <img src="${p.url}" alt="${p.caption||'Alok Guest House'}" loading="lazy">
+      <div class="g-overlay"><div class="g-caption">${p.caption||''}</div></div>
+      <div class="g-zoom">🔍</div>
+    </div>`).join('');
+}
+
+// ── LIGHTBOX ──
+function openLightbox(i) {
+  lbIndex = i;
+  document.getElementById('lightbox').style.display='flex';
+  document.body.style.overflow='hidden';
+  updateLB();
+}
+function closeLightbox(){ document.getElementById('lightbox').style.display='none'; document.body.style.overflow=''; }
+function lbNext(){ lbIndex=(lbIndex+1)%photos.length; updateLB(); }
+function lbPrev(){ lbIndex=(lbIndex-1+photos.length)%photos.length; updateLB(); }
+function updateLB(){
+  if(!photos.length) return;
+  document.getElementById('lbImg').src = photos[lbIndex].url;
+  document.getElementById('lbCaption').textContent = photos[lbIndex].caption||'';
+  document.getElementById('lbCounter').textContent = (lbIndex+1)+' / '+photos.length;
+}
+document.getElementById('lightbox').addEventListener('click',e=>{ if(e.target===document.getElementById('lightbox')) closeLightbox(); });
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('lightbox').style.display==='flex'){
+    if(e.key==='ArrowRight') lbNext();
+    if(e.key==='ArrowLeft') lbPrev();
+    if(e.key==='Escape') closeLightbox();
+  }
+});
 
 // ══ INIT ══
 loadAll();
